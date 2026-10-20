@@ -1,0 +1,26 @@
+.git
+.gitignore
+.gitattributes
+.idea
+*.iml
+*.ipr
+*.iws
+.vscode
+build/
+.gradle/
+out/
+bin/
+*.log
+hs_err_pid*.log
+replay_pid*.log
+
+# Segredos e ambiente: nunca entrar na imagem
+.env
+*.env
+!.env.exemplo
+
+# Documentacao e arquivos de apoio que nao entram no build
+docs/
+.scratch/
+*.md
+!README.md

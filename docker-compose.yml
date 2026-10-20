@@ -1,0 +1,68 @@
+# ============================================================================
+# Stack "aluguel": API + Postgres.
+#   docker compose up --build        # sobe tudo
+#   docker compose down              # derruba (mantem o volume)
+#   docker compose down -v           # derruba e apaga os dados
+#
+# As duas chaves LGPD sao obrigatorias. O Compose falha cedo (com mensagem)
+# se elas nao estiverem definidas no ambiente ou num arquivo .env
+# (veja .env.exemplo). Gere cada uma com:  openssl rand -base64 32
+# ============================================================================
+name: aluguel
+
+services:
+  # Banco de dados Postgres.
+  aluguel-db:
+    image: postgres:16-alpine
+    container_name: aluguel-db
+    environment:
+      POSTGRES_DB: meubanco
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d meubanco"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # API Spring Boot.
+  aluguel-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aluguel-api
+    container_name: aluguel-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://aluguel-db:5432/meubanco
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: secretpassword
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Chaves de protecao de dados pessoais (LGPD). O container NAO sobe sem elas:
+      # o placeholder sem padrao faz a aplicacao falhar no boot, o que e
+      # intencional. Exporte as duas em um arquivo .env (ignorado pelo git):
+      #   openssl rand -base64 32   # -> LOCADORA_DADO_PESSOAL_INDICE_CHAVE
+      #   openssl rand -base64 32   # -> LOCADORA_DADO_PESSOAL_CIFRA_CHAVE
+      LOCADORA_DADO_PESSOAL_INDICE_CHAVE: ${LOCADORA_DADO_PESSOAL_INDICE_CHAVE:?defina LOCADORA_DADO_PESSOAL_INDICE_CHAVE no .env ou no ambiente}
+      LOCADORA_DADO_PESSOAL_CIFRA_CHAVE: ${LOCADORA_DADO_PESSOAL_CIFRA_CHAVE:?defina LOCADORA_DADO_PESSOAL_CIFRA_CHAVE no .env ou no ambiente}
+    depends_on:
+      aluguel-db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
