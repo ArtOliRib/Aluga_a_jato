@@ -363,4 +363,4 @@ Legenda: `[ ]` a fazer · `[x]` feito · `[~]` em andamento · `[!]` bloqueado
 - `docs/adr/0002-padrao-respostas-controllers.md`
 - `docs/adr/0003-aluguel-guarda-dados-pessoais.md`
 - `docs/PLANO_PROXIMOS_PASSOS.md`
-- `docs/RELATORIO_TESTES_FALHANDO.md`
+- `docs/HISTORICO-testes-lgpd-2026-10.md`

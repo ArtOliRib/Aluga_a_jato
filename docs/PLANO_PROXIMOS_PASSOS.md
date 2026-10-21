@@ -1,5 +1,15 @@
 # Plano de Próximos Passos - Refatoração Controllers + DTOs
 
+> **ARQUIVO HISTÓRICO (encerrado em 2026-10-20).** As fases 1–5 abaixo foram
+> **concluídas**. Este documento é o registro de como o trabalho foi planejado e
+> executado, não uma lista de tarefas pendentes.
+>
+> Ele menciona `Cliente`, `ClienteController` e `TokenCliente` — arquivos que
+> **não existem mais** (removidos na Fase 5, decisão registrada no ADR-0003).
+> As referências são parte do histórico, não do estado atual do projeto.
+>
+> **Para o que falta hoje**, ver [`HANDOFF_FRONTEND.md`](HANDOFF_FRONTEND.md).
+
 **Projeto:** genericapi (API de Locação de Carros - Spring Boot 4, Java 25)  
 **Data:** 2026-10-20  
 **Foco:** Refatoração Controllers + DTOs (didática, sem quebrar contratos/LGPD)
