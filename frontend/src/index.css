@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/*
+  Tema da Veloz. Tailwind 4 le o tema daqui (nao ha mais tailwind.config.js).
+
+  A paleta e azul + branco + prata, mas com uma decisao deliberada: o "prata"
+  nao e um cinza neutro, e um cinza levemente azulado. Cinza puro ao lado de
+  azul saturado parece sujeira; cinza frio parece acabamento de carro.
+*/
+@theme {
+  --color-veloz-azul: #1D4ED8;
+  --color-veloz-azul-claro: #60A5FA;
+  --color-veloz-azul-fundo: #EFF6FF;
+  --color-veloz-prata: #94A3B8;
+  --color-veloz-prata-claro: #E2E8F0;
+  --color-veloz-grafite: #0F172A;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Sombra suave e azulada: e o que da o ar "estilizado" em vez de "dashboard".
+     Sombras neutras cinza achatam a interface. */
+  --shadow-veloz: 0 4px 20px -4px rgb(29 78 216 / 0.12);
+  --shadow-veloz-alta: 0 12px 32px -8px rgb(29 78 216 / 0.22);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-veloz-azul-fundo);
+  color: var(--color-veloz-grafite);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Barra de rolagem discreta, coerente com o resto do acabamento. */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-veloz-prata);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# Artefatos de build do tsc (build mode).
+*.tsbuildinfo
+
+# Variáveis de ambiente locais. Nunca commitar: o valor de VITE_API_URL muda
+# por ambiente, e qualquer segredo colado aqui vaza no bundle final, que é
+# público por natureza.
+.env
+.env.*
+!.env.example
+
+.DS_Store
