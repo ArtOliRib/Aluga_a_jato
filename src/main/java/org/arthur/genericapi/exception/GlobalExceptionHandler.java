@@ -8,11 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.util.List;
@@ -81,6 +83,32 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleCorpoInvalido(HttpMessageNotReadableException ex) {
         return resposta(HttpStatus.BAD_REQUEST, "Corpo da requisicao invalido",
                 "Verifique o JSON enviado e os valores dos campos enumerados");
+    }
+
+    /**
+     * Content-Type que a API nao sabe ler (ex.: {@code text/plain}).
+     *
+     * <p>Sem este handler, a excecao caia no {@code Exception.class} generico e o
+     * cliente recebia 500 - sugerindo que a API quebrou, quando na verdade a
+     * requisicao estava malformada. 415 diz exatamente o que corrigir.
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ProblemDetail> handleTipoDeMidiaNaoSuportado(HttpMediaTypeNotSupportedException ex) {
+        return resposta(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Tipo de conteudo nao suportado",
+                "Envie o corpo com Content-Type: application/json");
+    }
+
+    /**
+     * Rota que nao existe.
+     *
+     * <p>No Spring Boot 4 isso chega como {@code NoResourceFoundException} (antes
+     * era {@code NoHandlerFoundException}). Sem tratar, tambem virava 500: um
+     * front que digita a URL errada recebia "erro interno" em vez de 404.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ProblemDetail> handleRotaInexistente(NoResourceFoundException ex) {
+        return resposta(HttpStatus.NOT_FOUND, "Rota nao encontrada",
+                "O caminho '" + ex.getResourcePath() + "' nao existe nesta API");
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
