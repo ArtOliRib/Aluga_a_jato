@@ -53,7 +53,7 @@ export function Cartao({
 const estiloChave = (selecionado: boolean, className: string) =>
   `group relative block w-full rounded-veloz-alto p-4 text-left transition duration-150 ${
     selecionado
-      ? 'bg-veloz-azul text-white shadow-veloz-alta'
+      ? 'bg-veloz-azul-fundo ring-2 ring-veloz-azul shadow-veloz'
       : 'bg-white ring-1 ring-slate-900/5 hover:-translate-y-0.5 hover:shadow-veloz-alta'
   } ${className}`
 
@@ -62,7 +62,7 @@ function Furo({ selecionado }: { selecionado: boolean }) {
     <span
       aria-hidden="true"
       className={`absolute left-4 top-4 block size-3 rounded-full ring-1 ring-inset ${
-        selecionado ? 'bg-white/25 ring-white/40' : 'bg-veloz-papel ring-slate-900/10'
+        selecionado ? 'bg-veloz-azul/20 ring-veloz-azul/50' : 'bg-veloz-papel ring-slate-900/10'
       }`}
     />
   )

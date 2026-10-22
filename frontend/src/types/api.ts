@@ -98,6 +98,10 @@ export interface AluguelRequest {
   cnh: string
   carroId: string
   dataPrevistaDevolucao: string
+  /** Opcionais: quando ausentes, o servico assume agora / dados do carro. */
+  dataInicio?: string
+  quilometragemInicial?: number
+  valorDiaria?: number
   observacoes?: string
 }
 
