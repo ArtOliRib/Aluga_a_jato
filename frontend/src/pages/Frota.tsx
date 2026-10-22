@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { carrosApi } from '../api/endpoints'
 import { ApiError } from '../api/client'
 import {
@@ -8,8 +8,10 @@ import {
   Campo,
   Carregando,
   Cartao,
+  CartaoChaveLink,
   Selo,
   estiloInput,
+  TituloPagina,
   Vazio,
 } from '../components/ui'
 import { corDoStatusCarro, moeda, numero, rotulo } from '../components/formato'
@@ -55,17 +57,16 @@ export function Frota() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-veloz-grafite">Frota</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {numero(carros.length)} veículo{carros.length === 1 ? '' : 's'} na lista
-          </p>
-        </div>
-        <Botao onClick={() => setMostrandoForm((v) => !v)}>
-          {mostrandoForm ? 'Fechar' : 'Cadastrar carro'}
-        </Botao>
-      </header>
+      <TituloPagina
+        apoio={`${numero(carros.length)} veículo${carros.length === 1 ? '' : 's'} na lista`}
+        acao={
+          <Botao onClick={() => setMostrandoForm((v) => !v)}>
+            {mostrandoForm ? 'Fechar' : 'Cadastrar carro'}
+          </Botao>
+        }
+      >
+        Frota
+      </TituloPagina>
 
       {mostrandoForm && (
         <FormularioCarro
@@ -77,7 +78,7 @@ export function Frota() {
         />
       )}
 
-      <Cartao className="flex flex-wrap gap-3 p-4">
+      <Cartao className="flex flex-wrap items-end gap-3 p-4">
         <Campo rotulo="Status" className="w-44">
           <select
             className={estiloInput}
@@ -117,35 +118,33 @@ export function Frota() {
       {!carregando && carros.length > 0 && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {carros.map((c) => (
-            <Link key={c.id} to={`/frota/${c.id}`}>
-              <Cartao interativo className="h-full p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-semibold text-veloz-grafite">
-                      {c.marca} {c.modelo}
-                    </p>
-                    <p className="truncate text-sm text-slate-500">
-                      {c.nome} · {c.ano} · {c.cor}
-                    </p>
-                  </div>
-                  <Selo cor={corDoStatusCarro[c.status]}>{rotulo(c.status)}</Selo>
-                </div>
-
-                <div className="mt-4 flex items-end justify-between">
-                  <span className="rounded-lg bg-slate-100 px-2 py-1 font-mono text-sm font-medium tracking-wider text-slate-700">
-                    {c.placa}
+            <CartaoChaveLink key={c.id} para={`/frota/${c.id}`} className="h-full">
+              <span className="flex items-start justify-between gap-3">
+                <span className="min-w-0">
+                  <span className="block truncate font-semibold text-veloz-grafite">
+                    {c.marca} {c.modelo}
                   </span>
-                  <span className="text-sm font-semibold text-veloz-azul">
-                    {moeda(c.valorDiaria)}
-                    <span className="text-xs font-normal text-slate-500">/dia</span>
+                  <span className="block truncate text-sm text-slate-600">
+                    {c.nome} · {c.ano} · {c.cor}
                   </span>
-                </div>
+                </span>
+                <Selo cor={corDoStatusCarro[c.status]}>{rotulo(c.status)}</Selo>
+              </span>
 
-                <p className="mt-3 text-xs text-slate-500">
-                  {numero(c.quilometragem)} km · {c.categoria}
-                </p>
-              </Cartao>
-            </Link>
+              <span className="mt-4 flex items-end justify-between">
+                <span className="rounded-veloz bg-slate-100 px-2 py-1 font-mono text-sm font-medium tracking-wider text-slate-700">
+                  {c.placa}
+                </span>
+                <span className="text-sm font-semibold tabular text-veloz-azul">
+                  {moeda(c.valorDiaria)}
+                  <span className="text-xs font-normal text-slate-600">/dia</span>
+                </span>
+              </span>
+
+              <span className="mt-3 block text-xs text-slate-600">
+                {numero(c.quilometragem)} km · {c.categoria}
+              </span>
+            </CartaoChaveLink>
           ))}
         </div>
       )}

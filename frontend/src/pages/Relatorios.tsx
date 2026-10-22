@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react'
 import { relatoriosApi } from '../api/endpoints'
 import { ApiError } from '../api/client'
-import { Aviso, Botao, Campo, Carregando, Cartao, Metrica, estiloInput } from '../components/ui'
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Carregando,
+  Cartao,
+  Metrica,
+  estiloInput,
+  TituloPagina,
+} from '../components/ui'
 import { mesCorrente, moeda, numero } from '../components/formato'
 import type { MovimentacaoPorCarro, RelatorioMovimentacao } from '../types/api'
 
@@ -28,11 +37,15 @@ function paraIso(d: Date): string {
 }
 
 /*
-  Relatorios: o que justifica o sistema existir.
+  Relatorios: o fechamento do periodo.
 
   O grafico de barras do ranking e CSS puro (largura percentual), sem biblioteca.
   Uma lib de graficos aqui custaria ~100KB para desenhar uma barra — e as barras
   sao a unica forma que este dado pede.
+
+  A barra e solida, nao em gradiente. Gradiente aqui nao comunicaria nada: a
+  informacao esta no comprimento, e um degrade so adiciona ruido visual sobre a
+  escala.
 */
 export function Relatorios() {
   const inicial = mesCorrente()
@@ -85,12 +98,9 @@ export function Relatorios() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight text-veloz-grafite">Relatórios</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Fechamento financeiro do período. Aluguéis cancelados não entram nas somas.
-        </p>
-      </header>
+      <TituloPagina apoio="Fechamento financeiro do período. Aluguéis cancelados não entram nas somas.">
+        Relatórios
+      </TituloPagina>
 
       <Cartao className="flex flex-wrap items-end gap-3 p-4">
         <Campo rotulo="De" className="w-40">
@@ -119,41 +129,43 @@ export function Relatorios() {
 
       {!carregando && resumo && (
         <>
-          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Cartao className="p-5">
-              <Metrica rotulo="Receita total" valor={moeda(resumo.receitaTotal)} destaque />
-              <p className="mt-2 text-xs text-slate-500">No período selecionado</p>
-            </Cartao>
-            <Cartao className="p-5">
-              <Metrica rotulo="Recebido" valor={moeda(resumo.receitaPaga)} destaque />
-              <p className="mt-2 text-xs text-slate-500">
-                {moeda(resumo.receitaPendente)} pendente
-              </p>
-            </Cartao>
-            <Cartao className="p-5">
-              <Metrica rotulo="Ticket médio" valor={moeda(resumo.ticketMedio)} destaque />
-              <p className="mt-2 text-xs text-slate-500">
-                {numero(resumo.totalAlugueis)} aluguel(is)
-              </p>
-            </Cartao>
-            <Cartao className="p-5">
+          <section className="space-y-4">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <Metrica
+                rotulo="Receita total"
+                valor={moeda(resumo.receitaTotal)}
+                detalhe="No período selecionado"
+                destaque
+              />
+              <Metrica
+                rotulo="Recebido"
+                valor={moeda(resumo.receitaPaga)}
+                detalhe={`${moeda(resumo.receitaPendente)} pendente`}
+              />
+              <Metrica
+                rotulo="Ticket médio"
+                valor={moeda(resumo.ticketMedio)}
+                detalhe={`${numero(resumo.totalAlugueis)} aluguéis`}
+              />
               <Metrica
                 rotulo="Km percorridos"
                 valor={numero(resumo.quilometragemPercorrida)}
-                destaque
+                detalhe={`${numero(resumo.totalAtivos)} em aberto, ${numero(resumo.totalConcluidos)} concluídos`}
               />
-              <p className="mt-2 text-xs text-slate-500">
-                {numero(resumo.totalAtivos)} ativos · {numero(resumo.totalConcluidos)} concluídos
-              </p>
-            </Cartao>
+            </div>
           </section>
 
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-veloz-grafite">Receita por veículo</h2>
+          <section className="space-y-3 border-t border-slate-200 pt-8">
+            <h2 className="font-titulo text-xl font-semibold text-veloz-azul-leitura">
+              Receita por veículo
+            </h2>
 
             {ranking.length === 0 ? (
               <Cartao className="p-6">
-                <p className="text-sm text-slate-500">Nenhum aluguel no período selecionado.</p>
+                <p className="text-sm text-slate-600">
+                  Nenhum aluguel no período selecionado. Ajuste as datas ou escolha um atalho de
+                  período acima.
+                </p>
               </Cartao>
             ) : (
               <Cartao className="divide-y divide-slate-100">
@@ -164,16 +176,16 @@ export function Relatorios() {
                         <p className="truncate font-medium text-veloz-grafite">
                           {r.marca} {r.modelo}
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-600">
                           <span className="font-mono tracking-wider">{r.placa}</span> ·{' '}
                           {numero(r.totalAlugueis)} aluguel(is) · {numero(r.quilometragemPercorrida)} km
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold tabular-nums text-veloz-grafite">
+                        <p className="font-titulo text-lg font-semibold tabular text-veloz-grafite">
                           {moeda(r.receitaTotal)}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs tabular text-slate-600">
                           {r.percentualDaReceita.toFixed(1)}% da receita
                         </p>
                       </div>
@@ -183,7 +195,7 @@ export function Relatorios() {
                         melhor que o numero sozinho. */}
                     <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-veloz-azul-claro to-veloz-azul"
+                        className="h-full rounded-full bg-veloz-azul"
                         style={{ width: `${(r.receitaTotal / maiorReceita) * 100}%` }}
                       />
                     </div>

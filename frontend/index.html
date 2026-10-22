@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Registro de aluguel de veiculos com dados pessoais protegidos" />
+
+    <!--
+      Pre-carrega as duas fontes do intervalo "latin", que sao as usadas no
+      primeiro paint. Sem isso o texto aparece primeiro na fonte de fallback e
+      depois troca (o "pulo" de layout que se ve em site mal montado).
+      crossOrigin e obrigatorio aqui: fonte e sempre buscada em modo CORS.
+    -->
+    <link rel="preload" href="/fontes/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fontes/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin />
+
     <title>Veloz — Aluguel de Veiculos</title>
   </head>
   <body>

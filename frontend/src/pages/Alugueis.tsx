@@ -2,7 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { alugueisApi } from '../api/endpoints'
 import { ApiError } from '../api/client'
-import { Aviso, Botao, Campo, Carregando, Cartao, Selo, estiloInput, Vazio } from '../components/ui'
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Carregando,
+  Cartao,
+  Selo,
+  estiloInput,
+  TituloPagina,
+  Vazio,
+} from '../components/ui'
 import {
   corDoStatusAluguel,
   corDoStatusPagamento,
@@ -43,17 +53,16 @@ export function Alugueis() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-veloz-grafite">Aluguéis</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {numero(alugueis.length)} registro{alugueis.length === 1 ? '' : 's'}
-          </p>
-        </div>
-        <Link to="/alugueis/novo">
-          <Botao>Registrar aluguel</Botao>
-        </Link>
-      </header>
+      <TituloPagina
+        apoio={`${numero(alugueis.length)} registro${alugueis.length === 1 ? '' : 's'}`}
+        acao={
+          <Link to="/alugueis/novo">
+            <Botao>Entregar um carro</Botao>
+          </Link>
+        }
+      >
+        Aluguéis
+      </TituloPagina>
 
       <Cartao className="p-4">
         <Campo rotulo="Status" className="w-44">
@@ -82,7 +91,7 @@ export function Alugueis() {
             descricao="Registre um aluguel para ver o histórico aqui."
             acao={
               <Link to="/alugueis/novo">
-                <Botao>Registrar aluguel</Botao>
+                <Botao>Entregar um carro</Botao>
               </Link>
             }
           />
@@ -92,26 +101,26 @@ export function Alugueis() {
       {!carregando && alugueis.length > 0 && (
         <div className="space-y-2">
           {alugueis.map((a) => (
-            <Link key={a.id} to={`/alugueis/${a.id}`}>
+            <Link key={a.id} to={`/alugueis/${a.id}`} className="block">
               <Cartao
                 interativo
                 className={`flex flex-wrap items-center justify-between gap-4 p-4 ${
-                  a.atrasado ? 'ring-2 ring-red-500/30' : ''
+                  a.atrasado ? 'border-l-2 border-red-500' : ''
                 }`}
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="truncate font-semibold text-veloz-grafite">{a.pessoa.nome}</p>
                     {a.atrasado && (
-                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                      <span className="rounded-veloz bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
                         atrasado
                       </span>
                     )}
                   </div>
-                  <p className="truncate text-sm text-slate-500">
-                    {a.carro.marca} {a.carro.modelo} · {a.carro.placa}
+                  <p className="truncate text-sm text-slate-600">
+                    {a.carro.marca} {a.carro.modelo} · <span className="font-mono">{a.carro.placa}</span>
                   </p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs tabular text-slate-600">
                     {dataHora(a.dataInicio)} → {dataHora(a.dataPrevistaDevolucao)}
                   </p>
                 </div>
@@ -124,10 +133,10 @@ export function Alugueis() {
                 </div>
 
                 <div className="text-right">
-                  <p className="font-semibold tabular-nums text-veloz-grafite">
+                  <p className="font-titulo text-lg font-semibold tabular text-veloz-grafite">
                     {moeda(a.valorTotal)}
                   </p>
-                  <p className="text-xs text-slate-500">{a.totalDiarias} diária(s)</p>
+                  <p className="text-xs text-slate-600">{a.totalDiarias} diária(s)</p>
                 </div>
               </Cartao>
             </Link>

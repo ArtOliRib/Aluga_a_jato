@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
 /*
+  Fontes servidas pelo proprio projeto (frontend/public/fontes/), nao pelo
+  Google Fonts. Decisao deliberada: um sistema de locadora roda no balcao, e o
+  balcao nao deveria depender de um servidor de terceiro estar alcancavel para
+  a interface ficar legivel. Custo: ~280 KB no repositorio.
+
+  Sao dois arquivos por familia, separados por unicode-range: o "latin" cobre o
+  portugues do dia a dia e o "latin-ext" cobre o resto. O navegador so baixa o
+  segundo quando a pagina realmente usa um caractere daquele intervalo, entao
+  na pratica nao se paga por ele.
+*/
+
+/* Newsreader: titulo, numero e o que precisa de peso de documento. */
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fontes/newsreader-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fontes/newsreader-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Archivo: rotulo, corpo, botao e tabela. */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fontes/archivo-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fontes/archivo-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
   Tema da Veloz. Tailwind 4 le o tema daqui (nao ha mais tailwind.config.js).
 
   A paleta e azul + branco + prata, mas com uma decisao deliberada: o "prata"
   nao e um cinza neutro, e um cinza levemente azulado. Cinza puro ao lado de
   azul saturado parece sujeira; cinza frio parece acabamento de carro.
+
+  O azul tem dois valores com papeis distintos. "Azul" e cor de ACAO: botao
+  primario, item de navegacao ativo, chave de carro disponivel. "Azul fundo" e
+  cor de LEITURA: titulo de secao, texto sobre superficie clara. Separar os dois
+  evita o problema que a interface tinha antes, em que o mesmo azul saturado
+  aparecia em tudo e por isso nao marcava nada.
 */
 @theme {
-  --color-veloz-azul: #1D4ED8;
-  --color-veloz-azul-claro: #60A5FA;
+  --color-veloz-azul: #1743C4;
+  --color-veloz-azul-claro: #5B87F5;
   --color-veloz-azul-fundo: #EFF6FF;
+  --color-veloz-azul-leitura: #0B2559;
   --color-veloz-prata: #94A3B8;
   --color-veloz-prata-claro: #E2E8F0;
-  --color-veloz-grafite: #0F172A;
+  --color-veloz-grafite: #0B1220;
+  --color-veloz-papel: #F4F7FB;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: "Newsreader", ui-serif, Georgia, serif;
+
+  /* Raio curto. Canto muito arredondado e o tique visual mais reconhecivel de
+     interface gerada; placa de carro e documento nao tem canto arredondado. */
+  --radius-veloz: 4px;
+  --radius-veloz-alto: 6px;
 
   /* Sombra suave e azulada: e o que da o ar "estilizado" em vez de "dashboard".
      Sombras neutras cinza achatam a interface. */
-  --shadow-veloz: 0 4px 20px -4px rgb(29 78 216 / 0.12);
-  --shadow-veloz-alta: 0 12px 32px -8px rgb(29 78 216 / 0.22);
+  --shadow-veloz: 0 4px 20px -4px rgb(23 67 196 / 0.12);
+  --shadow-veloz-alta: 0 12px 32px -8px rgb(23 67 196 / 0.22);
 }
 
 html,
@@ -31,10 +101,19 @@ body,
 
 body {
   margin: 0;
-  background: var(--color-veloz-azul-fundo);
+  background: var(--color-veloz-papel);
   color: var(--color-veloz-grafite);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+  Numeros tabulares onde ha numero que se le em coluna (valores, km). Sem isso
+  o alinhamento vertical dos algarismos oscila conforme o digito.
+*/
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 /* Barra de rolagem discreta, coerente com o resto do acabamento. */
@@ -49,4 +128,29 @@ body {
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/*
+  Foco visivel para quem navega por teclado. So aparece no teclado (:focus-visible),
+  nao no clique de mouse, para nao poluir quem usa o mouse.
+*/
+:focus-visible {
+  outline: 2px solid var(--color-veloz-azul);
+  outline-offset: 2px;
+}
+
+/*
+  Respeita quem pediu menos movimento no sistema. Nao zera tudo: remove o que e
+  decorativo e mantem o que informa (o giro do indicador de carregamento
+  continua, porque e o unico sinal de que algo esta acontecendo).
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

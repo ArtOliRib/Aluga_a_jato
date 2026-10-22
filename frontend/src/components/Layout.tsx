@@ -8,6 +8,10 @@ import { Logo } from './Logo'
   areas (4): em cima, os rotulos competem com o titulo de cada tela; ao lado,
   ficam previsiveis em qualquer resolucao. Abaixo de 768px a lateral vira uma
   faixa horizontal rolavel, para nao comer a largura util no celular.
+
+  O item ativo usa o azul cheio; o inativo usa o azul de leitura. Distinguir os
+  dois evita que a navegacao inteira grite na mesma intensidade do botao
+  principal da tela.
 */
 
 const navegacao = [
@@ -24,7 +28,7 @@ export function Layout() {
         <div className="flex items-center justify-between px-5 py-4 md:block">
           <Link to="/" className="flex items-center gap-2.5">
             <Logo className="size-9" />
-            <span className="text-lg font-bold tracking-tight text-veloz-grafite">
+            <span className="font-titulo text-2xl font-semibold tracking-tight text-veloz-azul-leitura">
               Veloz
             </span>
           </Link>
@@ -37,10 +41,10 @@ export function Layout() {
               to={item.para}
               end={item.fim}
               className={({ isActive }) =>
-                `whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium transition ${
+                `whitespace-nowrap rounded-veloz px-3.5 py-2 text-sm font-medium transition duration-150 ${
                   isActive
                     ? 'bg-veloz-azul text-white shadow-veloz'
-                    : 'text-slate-600 hover:bg-veloz-azul-fundo hover:text-veloz-azul'
+                    : 'text-veloz-azul-leitura hover:bg-veloz-azul-fundo'
                 }`
               }
             >

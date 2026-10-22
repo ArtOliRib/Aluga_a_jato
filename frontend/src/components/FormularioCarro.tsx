@@ -71,7 +71,7 @@ export function FormularioCarro({
   return (
     <Cartao className="p-6">
       <h2 className="text-lg font-semibold text-veloz-grafite">Novo carro</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-600">
         A placa é dado pessoal: vai cifrada para o banco, com índice para busca.
       </p>
 

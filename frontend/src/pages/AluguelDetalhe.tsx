@@ -93,33 +93,44 @@ export function AluguelDetalhe() {
 
   return (
     <div className="space-y-6">
-      <Link to="/alugueis" className="text-sm font-medium text-veloz-azul hover:underline">
+      <Link
+        to="/alugueis"
+        className="text-sm font-medium text-veloz-azul-leitura underline-offset-4 hover:underline"
+      >
         ← Aluguéis
       </Link>
 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight text-veloz-grafite">
+            <h1 className="font-titulo text-3xl font-semibold tracking-tight text-veloz-azul-leitura">
               {aluguel.pessoa.nome}
             </h1>
             <Selo cor={corDoStatusAluguel[aluguel.status]}>{rotulo(aluguel.status)}</Selo>
-            <Selo cor={corDoStatusPagamento[aluguel.statusPagamento]}>
-              {rotulo(aluguel.statusPagamento)}
-            </Selo>
+            {/*
+              O selo de pagamento só aparece quando acrescenta informação. Um
+              aluguel cancelado tem pagamento cancelado, e mostrar "Cancelado
+              Cancelado" lado a lado é ruído, não clareza.
+            */}
+            {aluguel.statusPagamento !== aluguel.status && (
+              <Selo cor={corDoStatusPagamento[aluguel.statusPagamento]}>
+                {rotulo(aluguel.statusPagamento)}
+              </Selo>
+            )}
             {aluguel.atrasado && (
-              <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              <span className="rounded-veloz bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
                 atrasado
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm text-slate-500">CPF {aluguel.pessoa.cpf}</p>
+          <p className="mt-1 text-sm text-slate-600">CPF {aluguel.pessoa.cpf}</p>
         </div>
 
         <div className="text-right">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total</p>
-          <p className="text-3xl font-bold text-veloz-azul">{moeda(aluguel.valorTotal)}</p>
-          <p className="text-xs text-slate-500">
+          <p className="font-titulo text-3xl font-semibold tracking-tight tabular text-veloz-azul">
+            {moeda(aluguel.valorTotal)}
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
             {aluguel.totalDiarias} diária(s) × {moeda(aluguel.valorDiaria)}
           </p>
         </div>
@@ -129,33 +140,33 @@ export function AluguelDetalhe() {
 
       <section className="grid gap-4 sm:grid-cols-2">
         <Cartao className="p-5">
-          <h2 className="font-semibold text-veloz-grafite">Veículo</h2>
+          <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Veículo</h2>
           <p className="mt-2 font-medium text-slate-700">
             {aluguel.carro.marca} {aluguel.carro.modelo}
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             {aluguel.carro.cor} · {aluguel.carro.categoria}
           </p>
-          <span className="mt-3 inline-block rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm font-medium tracking-wider text-slate-700">
+          <span className="mt-3 inline-block rounded-veloz bg-slate-100 px-3 py-1 font-mono text-sm font-medium tracking-wider text-slate-700">
             {aluguel.carro.placa}
           </span>
         </Cartao>
 
         <Cartao className="p-5">
-          <h2 className="font-semibold text-veloz-grafite">Período</h2>
+          <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Período</h2>
           <dl className="mt-2 space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-500">Retirada</dt>
+              <dt className="text-slate-600">Retirada</dt>
               <dd className="font-medium text-slate-700">{dataHora(aluguel.dataInicio)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Prevista</dt>
+              <dt className="text-slate-600">Prevista</dt>
               <dd className="font-medium text-slate-700">
                 {dataHora(aluguel.dataPrevistaDevolucao)}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Devolvido</dt>
+              <dt className="text-slate-600">Devolvido</dt>
               <dd className="font-medium text-slate-700">
                 {aluguel.dataDevolucao ? dataHora(aluguel.dataDevolucao) : '—'}
               </dd>
@@ -164,23 +175,23 @@ export function AluguelDetalhe() {
         </Cartao>
 
         <Cartao className="p-5">
-          <h2 className="font-semibold text-veloz-grafite">Quilometragem</h2>
+          <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Quilometragem</h2>
           <dl className="mt-2 space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-500">Inicial</dt>
-              <dd className="font-medium tabular-nums text-slate-700">
+              <dt className="text-slate-600">Inicial</dt>
+              <dd className="font-medium tabular text-slate-700">
                 {numero(aluguel.quilometragemInicial)}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Final</dt>
-              <dd className="font-medium tabular-nums text-slate-700">
+              <dt className="text-slate-600">Final</dt>
+              <dd className="font-medium tabular text-slate-700">
                 {aluguel.quilometragemFinal !== null ? numero(aluguel.quilometragemFinal) : '—'}
               </dd>
             </div>
             <div className="flex justify-between border-t border-slate-100 pt-1.5">
               <dt className="font-medium text-slate-600">Percorrida</dt>
-              <dd className="font-semibold tabular-nums text-veloz-azul">
+              <dd className="font-semibold tabular text-veloz-azul">
                 {aluguel.quilometragemPercorrida !== null
                   ? `${numero(aluguel.quilometragemPercorrida)} km`
                   : '—'}
@@ -191,9 +202,9 @@ export function AluguelDetalhe() {
 
         {aluguel.observacoes && (
           <Cartao className="p-5">
-            <h2 className="font-semibold text-veloz-grafite">Observações</h2>
+            <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Observações</h2>
             <p className="mt-2 text-sm text-slate-600">{aluguel.observacoes}</p>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-slate-600">
               Texto livre cifrado no banco; aparece só no detalhe.
             </p>
           </Cartao>
@@ -202,8 +213,10 @@ export function AluguelDetalhe() {
 
       {podeDevolver && (
         <Cartao className="p-6">
-          <h2 className="text-lg font-semibold text-veloz-grafite">Registrar devolução</h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">
+            Registrar devolução
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
             A quilometragem final precisa ser maior ou igual à inicial (
             {numero(aluguel.quilometragemInicial)} km).
           </p>
@@ -236,8 +249,8 @@ export function AluguelDetalhe() {
           {podePagar && (
             <>
               <div className="mr-auto">
-                <h2 className="font-semibold text-veloz-grafite">Registrar pagamento</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Registrar pagamento</h2>
+                <p className="text-sm text-slate-600">
                   Marca {moeda(aluguel.valorTotal)} como recebido.
                 </p>
               </div>
@@ -250,8 +263,8 @@ export function AluguelDetalhe() {
           {podeCancelar && (
             <>
               <div className={podePagar ? '' : 'mr-auto'}>
-                <h2 className="font-semibold text-veloz-grafite">Cancelar aluguel</h2>
-                <p className="text-sm text-slate-500">
+                <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Cancelar aluguel</h2>
+                <p className="text-sm text-slate-600">
                   O valor sai das somas dos relatórios.
                 </p>
               </div>
@@ -282,8 +295,8 @@ export function AluguelDetalhe() {
       )}
 
       <Cartao className="p-5">
-        <h2 className="font-semibold text-veloz-grafite">Veículo no sistema</h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <h2 className="font-titulo text-lg font-semibold text-veloz-azul-leitura">Veículo no sistema</h2>
+        <p className="mt-1 text-sm text-slate-600">
           Estado atual do carro na frota, para conferência.
         </p>
         <Link to={`/frota/${aluguel.carro.id}`}>

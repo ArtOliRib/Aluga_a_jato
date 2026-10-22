@@ -2,18 +2,31 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { alugueisApi, carrosApi } from '../api/endpoints'
 import { ApiError } from '../api/client'
-import { Aviso, Botao, Campo, Carregando, Cartao, estiloInput } from '../components/ui'
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Carregando,
+  Cartao,
+  CartaoChave,
+  estiloInput,
+  TituloPagina,
+} from '../components/ui'
 import { moeda, numero, paraIsoLocal, rotulo } from '../components/formato'
 import type { Carro } from '../types/api'
 
 /*
   Registro de aluguel: o ato central do sistema.
 
-  Duas decisoes de layout que refletem o dominio:
+  Os passos sao numerados porque isto E uma sequencia de verdade — carro, depois
+  pessoa, depois confirmacao — e nao decoracao de layout. Se a ordem pudesse ser
+  qualquer uma, os numeros nao estariam aqui.
 
-  1. O carro vem primeiro, como lista de cards selecionaveis, e nao como um
-     <select> de nomes. O operador escolhe olhando placa e valor da diaria, que
-     sao o que ele precisa conferir; um dropdown esconderia justamente isso.
+  Duas decisoes que refletem o dominio:
+
+  1. O carro vem primeiro, como lista de cartoes-chave selecionaveis, e nao como
+     um <select> de nomes. O operador escolhe olhando placa e valor da diaria,
+     que sao o que ele precisa conferir; um dropdown esconderia justamente isso.
 
   2. So aparecem carros DISPONIVEL. Oferecer um carro alugado levaria a um 422
      previsivel — melhor nao oferecer.
@@ -86,81 +99,88 @@ export function NovoAluguel() {
 
   return (
     <div className="space-y-6">
-      <Link to="/alugueis" className="text-sm font-medium text-veloz-azul hover:underline">
+      <Link
+        to="/alugueis"
+        className="text-sm font-medium text-veloz-azul-leitura underline-offset-4 hover:underline"
+      >
         ← Aluguéis
       </Link>
 
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight text-veloz-grafite">Registrar aluguel</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Os dados da pessoa vão cifrados para o banco, com índice para busca.
-        </p>
-      </header>
+      <TituloPagina apoio="Os dados da pessoa vão cifrados para o banco, com índice para busca.">
+        Entregar um carro
+      </TituloPagina>
 
       {erro && <Aviso>{erro}</Aviso>}
 
-      <form onSubmit={enviar} className="space-y-6">
+      <form onSubmit={enviar} className="space-y-8">
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-veloz-grafite">1. Escolha o carro</h2>
+          <h2 className="font-titulo text-xl font-semibold text-veloz-azul-leitura">
+            1. Escolha o carro
+          </h2>
 
           {carregando ? (
             <Carregando texto="Carregando carros disponíveis..." />
           ) : carros.length === 0 ? (
             <Cartao className="p-6">
-              <p className="text-sm text-slate-500">
-                Nenhum carro disponível no momento. Cadastre um veículo ou devolva um aluguel
-                em aberto.
+              <p className="text-sm text-slate-600">
+                Nenhum carro disponível no momento. Registre a devolução de um aluguel em aberto para
+                liberar um veículo, ou cadastre um carro novo.
               </p>
-              <Link to="/frota">
-                <Botao variante="secundario" className="mt-3">
-                  Ir para a frota
-                </Botao>
-              </Link>
+              <div className="mt-3 flex gap-2">
+                <Link to="/alugueis?status=ATIVO">
+                  <Botao variante="secundario" type="button">
+                    Ver aluguéis em aberto
+                  </Botao>
+                </Link>
+                <Link to="/frota">
+                  <Botao variante="secundario" type="button">
+                    Ir para a frota
+                  </Botao>
+                </Link>
+              </div>
             </Cartao>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {carros.map((c) => {
                 const ativo = selecionado?.id === c.id
                 return (
-                  <button
+                  <CartaoChave
                     key={c.id}
-                    type="button"
+                    selecionado={ativo}
+                    className="h-full"
                     onClick={() => setSelecionado(c)}
-                    className={`rounded-2xl p-4 text-left transition ${
-                      ativo
-                        ? 'bg-veloz-azul text-white shadow-veloz-alta'
-                        : 'bg-white shadow-veloz ring-1 ring-slate-900/5 hover:-translate-y-0.5 hover:shadow-veloz-alta'
-                    }`}
                   >
-                    <p className={`font-semibold ${ativo ? 'text-white' : 'text-veloz-grafite'}`}>
+                    <span className={`block font-semibold ${ativo ? 'text-white' : 'text-veloz-grafite'}`}>
                       {c.marca} {c.modelo}
-                    </p>
-                    <p className={`text-sm ${ativo ? 'text-blue-100' : 'text-slate-500'}`}>
+                    </span>
+                    <span className={`block text-sm ${ativo ? 'text-blue-100' : 'text-slate-600'}`}>
                       {c.ano} · {c.cor} · {c.categoria}
-                    </p>
-                    <div className="mt-3 flex items-end justify-between">
+                    </span>
+                    <span className="mt-3 flex items-end justify-between">
                       <span
-                        className={`rounded-lg px-2 py-1 font-mono text-sm font-medium tracking-wider ${
+                        className={`rounded-veloz px-2 py-1 font-mono text-sm font-medium tracking-wider ${
                           ativo ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
                         }`}
                       >
                         {c.placa}
                       </span>
                       <span
-                        className={`text-sm font-semibold ${ativo ? 'text-white' : 'text-veloz-azul'}`}
+                        className={`text-sm font-semibold tabular ${ativo ? 'text-white' : 'text-veloz-azul'}`}
                       >
                         {moeda(c.valorDiaria)}
                         <span
-                          className={`text-xs font-normal ${ativo ? 'text-blue-100' : 'text-slate-500'}`}
+                          className={`text-xs font-normal ${ativo ? 'text-blue-100' : 'text-slate-600'}`}
                         >
                           /dia
                         </span>
                       </span>
-                    </div>
-                    <p className={`mt-2 text-xs ${ativo ? 'text-blue-100' : 'text-slate-400'}`}>
+                    </span>
+                    <span
+                      className={`mt-2 block text-xs tabular ${ativo ? 'text-blue-100' : 'text-slate-600'}`}
+                    >
                       {numero(c.quilometragem)} km
-                    </p>
-                  </button>
+                    </span>
+                  </CartaoChave>
                 )
               })}
             </div>
@@ -168,7 +188,9 @@ export function NovoAluguel() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-veloz-grafite">2. Dados da pessoa</h2>
+          <h2 className="font-titulo text-xl font-semibold text-veloz-azul-leitura">
+            2. Dados da pessoa
+          </h2>
           <Cartao className="p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <Campo rotulo="Nome completo" erro={errosCampo.nome}>
@@ -226,7 +248,11 @@ export function NovoAluguel() {
                 />
               </Campo>
 
-              <Campo rotulo="Observações (opcional)" erro={errosCampo.observacoes} className="sm:col-span-2">
+              <Campo
+                rotulo="Observações (opcional)"
+                erro={errosCampo.observacoes}
+                className="sm:col-span-2"
+              >
                 <textarea
                   rows={2}
                   className={estiloInput}
@@ -243,16 +269,17 @@ export function NovoAluguel() {
           <div>
             {selecionado ? (
               <>
-                <p className="text-sm text-slate-500">Carro selecionado</p>
+                <p className="text-sm text-slate-600">Carro selecionado</p>
                 <p className="font-semibold text-veloz-grafite">
-                  {selecionado.marca} {selecionado.modelo} · {selecionado.placa}
+                  {selecionado.marca} {selecionado.modelo} ·{' '}
+                  <span className="font-mono">{selecionado.placa}</span>
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600">
                   Diária de {moeda(selecionado.valorDiaria)} · {rotulo(selecionado.status)}
                 </p>
               </>
             ) : (
-              <p className="text-sm text-slate-500">Escolha um carro acima para continuar.</p>
+              <p className="text-sm text-slate-600">Escolha um carro acima para continuar.</p>
             )}
           </div>
 
