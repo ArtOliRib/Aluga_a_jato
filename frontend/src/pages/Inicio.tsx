@@ -32,7 +32,7 @@ export function Inicio() {
     ])
       .then(([rResumo, rDisponiveis, rAtivos]) => {
         if (rResumo.status === 'fulfilled') setResumo(rResumo.value)
-        if (rDisponiveis.status === 'fulfilled') setDisponiveis(rDisponiveis.value)
+        if (rDisponiveis.status === 'fulfilled') setDisponiveis(rDisponiveis.value.conteudo)
         if (rAtivos.status === 'fulfilled') setAtivos(rAtivos.value.conteudo)
 
         const falhou = [rResumo, rDisponiveis, rAtivos].find((r) => r.status === 'rejected')

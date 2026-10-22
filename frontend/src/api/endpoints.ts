@@ -32,7 +32,9 @@ export const carrosApi = {
   listar: (filtro: FiltroCarros = {}) =>
     api.get<PageResponse<Carro>>(`/api/v1/carros${query({ ...filtro })}`),
 
-  disponiveis: () => api.get<Carro[]>('/api/v1/carros/disponiveis'),
+  // Devolve PageResponse, nao array: a listagem de disponiveis passa pelo mesmo
+  // envelope paginado das outras listagens do backend.
+  disponiveis: () => api.get<PageResponse<Carro>>('/api/v1/carros/disponiveis'),
 
   buscar: (id: string) => api.get<Carro>(`/api/v1/carros/${id}`),
 

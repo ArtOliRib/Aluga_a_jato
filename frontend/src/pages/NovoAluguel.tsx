@@ -47,7 +47,7 @@ export function NovoAluguel() {
   useEffect(() => {
     carrosApi
       .disponiveis()
-      .then(setCarros)
+      .then((p) => setCarros(p.conteudo))
       .catch((e) => setErro(e instanceof ApiError ? e.message : 'Falha ao carregar os carros.'))
       .finally(() => setCarregando(false))
   }, [])
