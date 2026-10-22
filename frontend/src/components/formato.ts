@@ -70,7 +70,29 @@ export const corDoStatusPagamento: Record<StatusPagamento, string> = {
   CANCELADO: 'bg-slate-200 text-slate-600 ring-slate-500/20',
 }
 
-/** Rotulo legivel: DISPONIVEL -> Disponivel */
+/*
+  Rotulo legivel para os valores de enum da API.
+
+  Mapa explicito, e nao uma regra de transformacao, por causa do portugues: o
+  enum vem sem acento ("MANUTENCAO"), mas o rotulo precisa de acento
+  ("Manutenção"). Nao ha regra mecanica que recupere o acento a partir do enum
+  sem uma tabela de qualquer forma, e a tabela de 9 entradas e mais honesta do
+  que um palpite.
+
+  Um status desconhecido cai no fallback, que pelo menos nao quebra a tela.
+*/
+const rotulos: Record<string, string> = {
+  DISPONIVEL: 'Disponível',
+  ALUGADO: 'Alugado',
+  MANUTENCAO: 'Manutenção',
+  DESATIVADO: 'Desativado',
+  ATIVO: 'Ativo',
+  CONCLUIDO: 'Concluído',
+  CANCELADO: 'Cancelado',
+  PENDENTE: 'Pendente',
+  PAGO: 'Pago',
+}
+
 export function rotulo(status: string): string {
-  return status.charAt(0) + status.slice(1).toLowerCase()
+  return rotulos[status] ?? status.charAt(0) + status.slice(1).toLowerCase()
 }
