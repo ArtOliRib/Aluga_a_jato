@@ -1,4 +1,4 @@
-# aluguel
+# Aluga A Jato
 
 > API de registro de aluguel de veículos: quem pegou qual carro, quando, por
 > quantos km e por quanto — com os dados da pessoa protegidos por lei.
