@@ -44,3 +44,6 @@ replay_pid*.log
 # Chaves de protecao de documentos (LGPD). Nunca versionar.
 .env
 *.env
+.agents
+skills-lock.json
+

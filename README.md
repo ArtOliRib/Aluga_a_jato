@@ -57,6 +57,10 @@ do dado escolhe a normalização *dentro* do tipo, então parear errado deixa de
 expressável. A decisão está em
 [`docs/adr/0004-campo-protegido.md`](docs/adr/0004-campo-protegido.md).
 
+## Demonstração
+
+![Tela de funcionamento do projeto](docs/tela-funcionamento.png)
+
 ---
 
 ## Como rodar
