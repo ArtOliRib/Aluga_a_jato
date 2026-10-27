@@ -71,6 +71,9 @@ public class AluguelController {
     @PatchMapping("/{id}/cancelamento")
     public AluguelResponse cancelar(@PathVariable UUID id,
                                     @Valid @RequestBody(required = false) CancelamentoRequest request) {
-        return aluguelService.cancelar(id, request == null ? new CancelamentoRequest(null) : request);
+        if (request == null) {
+            request = new CancelamentoRequest(null);
+        }
+        return aluguelService.cancelar(id, request);
     }
 }

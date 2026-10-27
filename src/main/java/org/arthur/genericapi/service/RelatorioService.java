@@ -50,7 +50,7 @@ public class RelatorioService {
                 aluguelRepository.listarMovimentacaoPorCarro(de, ate);
 
         BigDecimal receitaGeral = linhas.stream()
-                .map(linha -> linha.getReceitaTotal() == null ? BigDecimal.ZERO : linha.getReceitaTotal())
+                .map(linha -> nvl(linha.getReceitaTotal()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return linhas.stream()
@@ -59,24 +59,29 @@ public class RelatorioService {
                         protecao.decifrar(linha.getPlacaCifrada()),
                         linha.getMarca(),
                         linha.getModelo(),
-                        linha.getTotalAlugueis() == null ? 0L : linha.getTotalAlugueis(),
+                        nvl(linha.getTotalAlugueis()),
                         nvl(linha.getReceitaTotal()),
                         nvl(linha.getReceitaPaga()),
                         nvl(linha.getReceitaTotal()).subtract(nvl(linha.getReceitaPaga())),
-                        linha.getQuilometragemPercorrida() == null ? 0L : linha.getQuilometragemPercorrida(),
+                        nvl(linha.getQuilometragemPercorrida()),
                         percentual(linha.getReceitaTotal(), receitaGeral)))
                 .toList();
     }
 
     private static BigDecimal percentual(BigDecimal receitaLinha, BigDecimal receitaGeral) {
-        return receitaGeral.signum() == 0
-                ? BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP)
-                : nvl(receitaLinha).multiply(BigDecimal.valueOf(100))
-                        .divide(receitaGeral, 2, java.math.RoundingMode.HALF_UP);
+        if (receitaGeral.signum() == 0) {
+            return BigDecimal.ZERO.setScale(2, java.math.RoundingMode.HALF_UP);
+        }
+        return nvl(receitaLinha).multiply(BigDecimal.valueOf(100))
+                .divide(receitaGeral, 2, java.math.RoundingMode.HALF_UP);
     }
 
     private static BigDecimal nvl(BigDecimal valor) {
         return valor == null ? BigDecimal.ZERO : valor;
+    }
+
+    private static long nvl(Long valor) {
+        return valor == null ? 0L : valor;
     }
 
     private void validarPeriodo(LocalDateTime de, LocalDateTime ate) {

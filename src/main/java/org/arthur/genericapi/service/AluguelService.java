@@ -60,6 +60,12 @@ public class AluguelService {
         CampoProtegido cpf = CampoProtegido.deDocumento(request.cpf(), protecao);
         CampoProtegido cnh = CampoProtegido.deDocumento(request.cnh(), protecao);
 
+        LocalDateTime dataInicio = request.dataInicio() != null ? request.dataInicio() : LocalDateTime.now();
+        Long quilometragemInicial = request.quilometragemInicial() != null
+                ? request.quilometragemInicial()
+                : carro.getQuilometragem();
+        java.math.BigDecimal valorDiaria = request.valorDiaria() != null ? request.valorDiaria() : carro.getValorDiaria();
+
         Aluguel aluguel = new Aluguel(
                 nome.indice(), nome.cifrado(),
                 cpf.indice(), cpf.cifrado(),
@@ -67,10 +73,10 @@ public class AluguelService {
                 CampoProtegido.deTexto(request.telefone(), protecao).cifrado(),
                 cnh.indice(), cnh.cifrado(),
                 carro,
-                request.dataInicio() != null ? request.dataInicio() : LocalDateTime.now(),
+                dataInicio,
                 request.dataPrevistaDevolucao(),
-                request.quilometragemInicial() != null ? request.quilometragemInicial() : carro.getQuilometragem(),
-                request.valorDiaria() != null ? request.valorDiaria() : carro.getValorDiaria(),
+                quilometragemInicial,
+                valorDiaria,
                 CampoProtegido.deTextoOpcional(request.observacoes(), protecao).cifrado()
         );
 
