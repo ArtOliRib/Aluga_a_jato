@@ -26,6 +26,14 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
 locadora:
   cors:
     origens-permitidas: ${LOCADORA_CORS_ORIGENS_PERMITIDAS:http://localhost:5173,http://localhost:3000}
